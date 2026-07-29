@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>约稿信息填写</title>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card: #ffffff;
+            --text: #2c2c2c;
+            --text-light: #888;
+            --primary: #6c63ff;
+            --primary-light: #8b83ff;
+            --border: #e8e8e8;
+            --success: #52c41a;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 4px 20px rgba(108, 99, 255, 0.1);
+            --radius: 14px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* 分区 */
+        .section {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 24px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .section:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bg);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 表单字段 */
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+        .field-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        label .hint {
+            font-weight: 400;
+            color: var(--text-light);
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
+        label .required {
+            color: #ff4d4f;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text);
+            background: #fff;
+            transition: all 0.25s;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.08);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #ccc;
+        }
+
+        /* 单选项组 */
+        .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-option label {
+            display: inline-block;
+            padding: 8px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0;
+            user-select: none;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .radio-option label:hover {
+            border-color: var(--primary-light);
+        }
+
+        /* 两列布局 */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 520px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 提交按钮 */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 成功提示 */
+        .success-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .success-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .success-card {
+            background: #fff;
+            padding: 40px 50px;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.85);
+            transition: transform 0.3s;
+            max-width: 90%;
+            width: 360px;
+        }
+
+        .success-modal.show .success-card {
+            transform: scale(1);
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 32px;
+        }
+
+        .success-card h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .success-card p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 8px 18px;
+            border: 1.5px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+            color: #fff;
+        }
+
+        /* 确认图弹窗 */
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            padding: 20px;
+        }
+
+        .image-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .image-modal-content {
+            background: #1a1a1a;
+            border-radius: 16px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.92);
+            transition: transform 0.3s;
+        }
+
+        .image-modal.show .image-modal-content {
+            transform: scale(1);
+        }
+
+        .image-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            color: #fff;
+            border-bottom: 1px solid #333;
+        }
+
+        .image-modal-header h3 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .image-wrap {
+            flex: 1;
+            overflow: auto;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-wrap img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .image-tip {
+            text-align: center;
+            padding: 8px;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #333;
+        }
+
+        .image-actions {
+            padding: 14px 16px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            border-top: 1px solid #333;
+        }
+
+        .image-actions .action-btn {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
+        }
+
+        .image-actions .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #2a2a2a;
+        }
+
+        .image-actions .action-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>约稿信息填写</h1>
+            <p>请认真填写以下信息，方便画师更好地完成你的约稿</p>
+        </div>
+
+        <form id="yuegaoForm">
+            <!-- 制品信息 -->
+            <div class="section">
+                <div class="section-title">制品信息</div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>制品尺寸 <span class="required">*</span></label>
+                        <input type="text" name="productSize" placeholder="例：A5 / 148×210mm" required>
+                    </div>
+                    <div class="field-group">
+                        <label>用途 <span class="required">*</span></label>
+                        <input type="text" name="usage" placeholder="例：同人志封面 / 吧唧" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>出血线 <span class="hint">不填默认3mm</span></label>
+                        <input type="text" name="bleedLine" placeholder="默认3mm">
+                    </div>
+                    <div class="field-group">
+                        <label>是否有模板 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="tpl-yes" name="hasTemplate" value="有" required>
+                                <label for="tpl-yes">有</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="tpl-no" name="hasTemplate" value="无">
+                                <label for="tpl-no">无</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>稿图是否有透明底 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="trans-yes" name="transparentBg" value="有" required>
+                                <label for="trans-yes">有</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="trans-no" name="transparentBg" value="无">
+                                <label for="trans-no">无</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>稿图是否有分层文件 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="layer-yes" name="layeredFile" value="有" required>
+                                <label for="layer-yes">有</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="layer-no" name="layeredFile" value="无">
+                                <label for="layer-no">无</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label>截止日期 (DDL) <span class="required">*</span></label>
+                    <input type="date" name="ddl" required>
+                </div>
+            </div>
+
+            <!-- 稿件要求 -->
+            <div class="section">
+                <div class="section-title">稿件要求</div>
+
+                <div class="field-group">
+                    <label>风格 <span class="hint">有参考请带例图链接</span></label>
+                    <textarea name="style" placeholder="描述你想要的画风，如有参考例图请贴链接"></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label>颜色 <span class="hint">有指定请带色卡链接</span></label>
+                    <textarea name="color" placeholder="指定颜色要求，如有色卡请贴链接"></textarea>
+                </div>
+            </div>
+
+            <!-- 角色信息 -->
+            <div class="section">
+                <div class="section-title">角色信息</div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>IP</label>
+                        <input type="text" name="ip" placeholder="例：原神 / 明日方舟">
+                    </div>
+                    <div class="field-group">
+                        <label>角色名 <span class="required">*</span></label>
+                        <input type="text" name="charName" placeholder="角色名称" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>英文名</label>
+                        <input type="text" name="engName" placeholder="角色的英文名">
+                    </div>
+                    <div class="field-group">
+                        <label>生日</label>
+                        <input type="text" name="birthday" placeholder="例：1月1日">
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label>英文关键词</label>
+                    <input type="text" name="engKeywords" placeholder="例：Tsundere, Long hair, Blue eyes">
+                </div>
+            </div>
+
+            <!-- 补充信息 -->
+            <div class="section">
+                <div class="section-title">补充信息</div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label>CN <span class="required">*</span></label>
+                        <input type="text" name="nickname" placeholder="方便联系" required>
+                    </div>
+                    <div class="field-group">
+                        <label>联系方式 <span class="required">*</span></label>
+                        <input type="text" name="contact" placeholder="QQ / 微信" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label>其他备注</label>
+                    <textarea name="other" placeholder="任何你想补充的内容"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">提 交</button>
+        </form>
+
+        <div class="footer">
+            填写完毕请点击提交 · 感谢配合
+        </div>
+    </div>
+
+    <!-- 成功弹窗 -->
+    <div class="success-modal" id="successModal">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h2>提交成功</h2>
+            <p id="successMsg">约稿信息已发送给画师，请耐心等待联系</p>
+            <div class="success-actions">
+                <button class="action-btn primary" id="viewImageBtn" onclick="showResultImage()">查看确认图</button>
+                <button class="action-btn" onclick="closeSuccess()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认图弹窗 -->
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <div class="image-modal-header">
+                <h3>约稿确认图</h3>
+                <button class="close-btn" onclick="closeImageModal()">×</button>
+            </div>
+            <div class="image-wrap">
+                <img id="resultImage" alt="约稿确认图">
+            </div>
+            <div class="image-tip">长按图片可保存到相册</div>
+            <div class="image-actions">
+                <button class="action-btn primary" onclick="downloadImage()">下载图片</button>
+                <button class="action-btn" onclick="closeImageModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('yuegaoForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successModal = document.getElementById('successModal');
+        const imageModal = document.getElementById('imageModal');
+        const resultImage = document.getElementById('resultImage');
+        let currentImageUrl = null;
+
+        function showResultImage() {
+            if (currentImageUrl) {
+                resultImage.src = currentImageUrl;
+                imageModal.classList.add('show');
+                successModal.classList.remove('show');
+            } else {
+                alert('暂无可显示的图片');
+            }
+        }
+
+        function closeImageModal() {
+            imageModal.classList.remove('show');
+        }
+
+        function closeSuccess() {
+            successModal.classList.remove('show');
+        }
+
+        function downloadImage() {
+            if (!currentImageUrl) return;
+            const a = document.createElement('a');
+            a.href = currentImageUrl;
+            a.download = `约稿确认图_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) closeImageModal();
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 收集表单数据
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value.trim();
+            }
+
+            // 提交按钮状态
+            submitBtn.disabled = true;
+            submitBtn.textContent = '生成确认图中...';
+
+            try {
+                const resp = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await resp.json();
+
+                if (result.success) {
+                    currentImageUrl = result.imageUrl;
+                    successModal.classList.add('show');
+                    form.reset();
+                } else {
+                    alert('提交失败：' + (result.message || '未知错误'));
+                }
+            } catch (err) {
+                alert('网络错误，请重试');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提 交';
+            }
+        });
+    </script>
+</body>
+</html>
